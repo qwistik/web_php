@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../css/authorization.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<form id="authorizationForm" method="post">
+    <p>Авторизація</p>
+    <div class="form-group">
+    <label for="email">Електронна пошта:</label>
+    <input type="text" id="email" name="email"></input><br>
+    </div>
+    <span class="error-message" id="emailError"></span>
+    <div class="form-group">
+    <label for="password">Пароль:</label>
+    <input type="password" id="password" name="password"></input><br><br>
+    </div>
+    <span class="error-message" id="passwordError"></span>
+    <input type="submit" id="submit" name="submit" value="Увійти"></input>
+</form>
+<script>
+    $("#authorizationForm").submit(function(event){
+        event.preventDefault();
+
+        let valid = true;
+        $(".error-message").text("").hide();
+
+        const email = $("#email").val();
+        const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+        if (email === "") {
+            $("#emailError").text("Електронна пошта не може бути порожньою.").show();
+            valid = false;
+        } else if (!emailPattern.test(email)) {
+            $("#emailError").text("Неправильний формат електронної пошти.").show();
+            valid = false;
+        }
+
+        const password = $("#password").val();
+        if (password === "") {
+            $("#passwordError").text("Пароль не може бути порожнім.").show();
+            valid = false;
+        }
+
+        if (valid) {
+            console.log("Success")
+            $.ajax({
+                type: "POST",
+                url: "../phpFiles/authorization.php",
+                data: $(this).serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        window.location.href = "../phpFiles/index.php";
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            });
+        }
+
+    });
+</script>
+</body>
+</html>
